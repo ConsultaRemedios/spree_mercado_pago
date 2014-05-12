@@ -7,7 +7,7 @@ Spree::BaseHelper.class_eval do
 
     payment = mp_client.create_preference payment_preference(payment_method)
 
-    payment['sandbox_init_point']
+    payment['init_point']
   end
 
   private

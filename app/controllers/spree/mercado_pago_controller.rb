@@ -1,6 +1,24 @@
 module Spree
   class MercadoPagoController < StoreController
 
+    def ipn
+      gateway = Spree::PaymentMethod.where(
+        type: 'Spree::Gateway::MercadoPago',
+        environment: Rails.env
+      ).first
+
+      mp_client = gateway.provider
+      notification = mp_client.notification(params[:id])
+
+      order_no = notification["collection"]["external_reference"]
+      order_status = notification["collection"]["status"]
+      order = Spree::Order.find_by(number: order_no)
+
+      update_payment_status(order, order_status)
+
+      render text: "OK"
+    end
+
     def success
       proccess_order
     end
@@ -15,6 +33,21 @@ module Spree
     end
 
     private
+      def update_payment_status(order, order_status)
+        raise ActionController::RoutingError.new('Not Found') unless order.payments.any?
+
+        payment = order.payments.last
+
+        case order_status
+        when 'approved'
+          payment.complete
+        when 'pending', 'in_process', 'rejected'
+          payment.pend
+        when 'refunded', 'cancelled'
+          payment.failure
+        end
+      end
+
       def payment_method
         Spree::PaymentMethod.find(params[:payment_method])
       end
@@ -29,7 +62,7 @@ module Spree
 
         order.next
         if order.complete?
-          flash.notice = Spree.t(:order_processed_successfully)
+          flash[:success] = Spree.t(:order_mp_processed_successfully)
           redirect_to order_path(order, token: order.token)
         else
           redirect_to checkout_state_path(order.state)

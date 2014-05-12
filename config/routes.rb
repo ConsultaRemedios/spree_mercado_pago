@@ -4,6 +4,8 @@ Spree::Core::Engine.routes.draw do
     get :success, as: :mercado_pago_success
     get :pending, as: :mercado_pago_pending
     get :failure, as: :mercado_pago_failure
+
+    post :ipn
   end
 
 end
