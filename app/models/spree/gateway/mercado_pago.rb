@@ -84,14 +84,20 @@ module Spree
       preference[:notification_uri] = notification_uri
 
       # User Information
-      preference[:payer][:phone][:area_code] = order.ship_address.phone.gsub(/\D/,"")[0,2]
-      preference[:payer][:phone][:number] = order.ship_address.phone.gsub(/\D/,"")[2,9]
-      preference[:payer][:address][:zip_code] = order.ship_address.zipcode
-      preference[:payer][:address][:street_name] = order.ship_address.address1
-      preference[:payer][:email] = order.user.email
-      preference[:payer][:name] = order.ship_address.firstname
-      preference[:payer][:surname] = order.user.email
-      preference[:payer][:date_created] = order.user.created_at.to_time.iso8601
+      preference[:payer] = {
+        phone: {
+          area_code: order.ship_address.phone.gsub(/\D/,"")[0,2],
+          number: order.ship_address.phone.gsub(/\D/,"")[2,9],
+        },
+        address:{
+          zip_code: order.ship_address.zipcode,
+          street_name: order.ship_address.address1,
+        },
+        email: order.user.email,
+        name: order.ship_address.firstname,
+        surname: order.user.email,
+        date_created: order.user.created_at.to_time.iso8601
+      }
 
       # Items Information
       preference[:items] = []
@@ -107,8 +113,12 @@ module Spree
       end
 
       #Shipments Information
-      preference[:shipments][:receiver_address][:zip_code] = order.ship_address.zip_code
-      preference[:shipments][:receiver_address][:street_name] = order.ship_address.address1
+      preference[:shipments] = {
+        receiver_address: {
+          zip_code: order.ship_address.zipcode,
+          street_name: order.ship_address.address1,
+        }
+      }
 
       preference
     end
