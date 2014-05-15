@@ -78,7 +78,7 @@ module Spree
     def payment_preference(order, back_urls, notification_uri)
       preference = Hash.new
       preference[:external_reference] = order.number
-      preference[:marketplace_fee] = 0.10
+      preference[:marketplace_fee] = marketplace_fee(order)
       preference[:back_urls] = back_urls
       preference[:notification_uri] = notification_uri
       preference[:items] = []
@@ -90,12 +90,18 @@ module Spree
           :quantity => item.quantity,
           :currency_id => item.order.currency,
           :picture_url => small_image_url(item.product),
-          :description => item.product.description,
-
+          :description => item.product.description
         }
       end
 
       preference
+    end
+
+    def marketplace_fee(order)
+      0.0 unless ENV['MERCADO_PAGO_FEE_PERCENT'].present?
+      percent = ENV['MERCADO_PAGO_FEE_PERCENT'].to_f
+
+      (percent / 100.0) * order.total
     end
 
   end
