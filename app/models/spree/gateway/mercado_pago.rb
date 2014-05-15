@@ -77,12 +77,24 @@ module Spree
 
     def payment_preference(order, back_urls, notification_uri)
       preference = Hash.new
+      # Order Information
       preference[:external_reference] = order.number
       preference[:marketplace_fee] = marketplace_fee(order)
       preference[:back_urls] = back_urls
       preference[:notification_uri] = notification_uri
-      preference[:items] = []
 
+      # User Information
+      preference[:payer][:phone][:area_code] = order.ship_address.phone.gsub(/\D/,"")[0,2]
+      preference[:payer][:phone][:number] = order.ship_address.phone.gsub(/\D/,"")[2,9]
+      preference[:payer][:address][:zip_code] = order.ship_address.zipcode
+      preference[:payer][:address][:street_name] = order.ship_address.address1
+      preference[:payer][:email] = order.user.email
+      preference[:payer][:name] = order.ship_address.firstname
+      preference[:payer][:surname] = order.user.email
+      preference[:payer][:date_created] = order.user.created_at.to_time.iso8601
+
+      # Items Information
+      preference[:items] = []
       order.line_items.each do |item|
         preference[:items] << {
           :title => item.product.name,
@@ -93,6 +105,10 @@ module Spree
           :description => item.product.description
         }
       end
+
+      #Shipments Information
+      preference[:shipments][:receiver_address][:zip_code] = order.ship_address.zip_code
+      preference[:shipments][:receiver_address][:street_name] = order.ship_address.address1
 
       preference
     end
