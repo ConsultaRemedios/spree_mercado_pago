@@ -6,7 +6,7 @@ Spree::Core::Engine.routes.draw do
     get :failure, as: :mercado_pago_failure
 
     post :ipn, as: :mercado_pago_notification
-    get :setup
+    get :setup as: :mercado_pago_setup
   end
 
 end
