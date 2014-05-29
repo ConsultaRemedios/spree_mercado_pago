@@ -93,10 +93,10 @@ module Spree
           zip_code: order.ship_address.zipcode,
           street_name: order.ship_address.address1,
         },
-        email: order.user.email,
+        email: order.user.try(:email),
         name: order.ship_address.firstname,
-        surname: order.user.email,
-        date_created: order.user.created_at.to_time.iso8601
+        surname: order.user.try(:email)
+        #date_created: order.user.created_at.to_time.iso8601
       }
 
       # Items Information
