@@ -125,7 +125,7 @@ module Spree
           :title => 'Taxas',
           :unit_price => order.adjustment_total.to_f,
           :quantity => 1,
-          :currency_id: order.currency
+          :currency_id => order.currency
         }
       end
 
