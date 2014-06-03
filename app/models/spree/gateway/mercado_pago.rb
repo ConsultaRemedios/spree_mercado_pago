@@ -83,27 +83,24 @@ module Spree
       preference[:back_urls] = back_urls
       preference[:notification_uri] = notification_uri
 
-
-      payer_date_created = if order.user.nil?
-        nil
-      else
-        order.user.created_at.to_time.iso8601
-      end
-
       # User Information
       preference[:payer] = {
         phone: {
           area_code: order.ship_address.phone.gsub(/\D/,"")[0,2],
           number: order.ship_address.phone.gsub(/\D/,"")[2,9],
         },
-        address:{
+        address: {
           zip_code: order.ship_address.zipcode,
           street_name: order.ship_address.address1,
         },
         email: order.user.try(:email),
-        name: order.ship_address.firstname,
-        surname: order.user.try(:email),
-        date_created: payer_date_created
+        identification: {
+          type: 'CPF',
+          number: order.user.document
+        },
+        name: order.user.first_name,
+        surname: order.user.last_name,
+        date_created: order.user.created_at.to_time.iso8601
       }
 
       # Items Information
@@ -115,14 +112,15 @@ module Spree
           :quantity => item.quantity,
           :currency_id => order.currency,
           :picture_url => small_image_url(item.product),
-          :description => item.product.description
+          :description => item.product.description,
+          :category_id => 'others'
         }
       end
 
       # Order Adjusts
       if order.adjustment_total.to_f > 0
         preference[:items] << {
-          :title => 'Taxas',
+          :title => 'Ajustes',
           :unit_price => order.adjustment_total.to_f,
           :quantity => 1,
           :currency_id => order.currency
