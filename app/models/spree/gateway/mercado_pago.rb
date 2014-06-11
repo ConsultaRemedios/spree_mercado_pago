@@ -1,4 +1,5 @@
 require 'mercadopago'
+require 'uri'
 
 module Spree
   class Gateway::MercadoPago < Gateway
@@ -67,9 +68,14 @@ module Spree
 
     def payment_preference(order, back_urls, notification_uri)
       preference = Hash.new
+
+      success_uri = back_urls[:success]
+      uri = URI(success_uri)
+
+      external_reference = "#{order.number}@#{uri.host}"
+
       # Order Information
       preference[:external_reference] = order.number
-      # preference[:marketplace_fee] = marketplace_fee(order)
       preference[:back_urls] = back_urls
       preference[:notification_uri] = notification_uri
 
@@ -126,13 +132,6 @@ module Spree
       }
 
       preference
-    end
-
-    def marketplace_fee(order)
-      0.0 unless ENV['MERCADO_PAGO_FEE_PERCENT'].present?
-      percent = ENV['MERCADO_PAGO_FEE_PERCENT'].to_f
-
-      (percent / 100.0) * order.total
     end
 
   end

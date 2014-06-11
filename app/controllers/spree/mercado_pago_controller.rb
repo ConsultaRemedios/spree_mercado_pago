@@ -4,7 +4,9 @@ module Spree
     def ipn
       notification = gateway.notification(params[:id])
 
-      order_no = notification["collection"]["external_reference"]
+      external_reference = notification["collection"]["external_reference"]
+
+      order_no = external_reference.split('@').first
       order_status = notification["collection"]["status"]
       order = Spree::Order.find_by(number: order_no)
 
