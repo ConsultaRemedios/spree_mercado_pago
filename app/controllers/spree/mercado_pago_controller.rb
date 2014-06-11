@@ -1,22 +1,6 @@
 module Spree
   class MercadoPagoController < StoreController
 
-    def setup
-      mp = gateway.provider_class.new(ENV['MERCADO_PAGO_APP_ID'], ENV['MERCADO_PAGO_SECRET_TOKEN'], params[:code])
-      auth = mp.authorization_code(mercado_pago_setup_url)
-
-      if auth.has_key?("refresh_token")
-        gateway.preferred_authorization_code = params[:code]
-        gateway.preferred_refresh_token = auth["refresh_token"]
-        gateway.preferred_access_token = auth["access_token"]
-
-        flash[:notice] = "Parabéns! O meio de pagamento Mercado Pago foi vinculado com sucesso a sua loja e está pronto para ser utilizado."
-        redirect_to root_path
-      else
-        render text: auth['message']
-      end
-    end
-
     def ipn
       notification = gateway.notification(params[:id])
 

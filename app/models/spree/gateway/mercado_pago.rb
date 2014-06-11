@@ -4,9 +4,8 @@ module Spree
   class Gateway::MercadoPago < Gateway
     include Spree::BaseHelper
 
-    preference :authorization_code, :string
-    preference :refresh_token, :string
-    preference :access_token, :string
+    preference :client_id, :string
+    preference :client_secret, :string
 
     def source_required?
       false
@@ -37,27 +36,18 @@ module Spree
     end
 
     def provider
-      @provider ||= provider_class.new(ENV['MERCADO_PAGO_APP_ID'], ENV['MERCADO_PAGO_SECRET_TOKEN'], preferred_refresh_token)
+      @provider ||= provider_class.new(preferred_client_id, preferred_client_secret)
     end
 
     def notification(ref)
       notification = provider.notification(ref)
 
-      self.preferred_refresh_token = provider.refresh_token
-      self.preferred_access_token = provider.access_token
-
-      self.save!
-
       notification
     end
 
     def create_preference(order, back_urls, notification_uri)
-      preference = provider.create_preference(payment_preference(order, back_urls, notification_uri))
-
-      self.preferred_refresh_token = provider.refresh_token
-      self.preferred_access_token = provider.access_token
-
-      self.save!
+      payment_preference = payment_preference(order, back_urls, notification_uri)
+      preference = provider.create_preference(payment_preference)
 
       preference
     end
@@ -79,7 +69,7 @@ module Spree
       preference = Hash.new
       # Order Information
       preference[:external_reference] = order.number
-      preference[:marketplace_fee] = marketplace_fee(order)
+      # preference[:marketplace_fee] = marketplace_fee(order)
       preference[:back_urls] = back_urls
       preference[:notification_uri] = notification_uri
 
