@@ -48,6 +48,8 @@ module Spree
 
     def create_preference(order, back_urls, notification_uri)
       payment_preference = payment_preference(order, back_urls, notification_uri)
+
+      byebug
       preference = provider.create_preference(payment_preference)
 
       preference
@@ -75,7 +77,7 @@ module Spree
       external_reference = "#{order.number}@#{uri.host}"
 
       # Order Information
-      preference[:external_reference] = order.number
+      preference[:external_reference] = external_reference
       preference[:back_urls] = back_urls
       preference[:notification_uri] = notification_uri
 
