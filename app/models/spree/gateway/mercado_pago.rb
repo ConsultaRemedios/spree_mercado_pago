@@ -49,7 +49,6 @@ module Spree
     def create_preference(order, back_urls, notification_uri)
       payment_preference = payment_preference(order, back_urls, notification_uri)
 
-      byebug
       preference = provider.create_preference(payment_preference)
 
       preference
