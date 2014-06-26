@@ -1,8 +1,16 @@
-<p>Clique no botão abaixo para efetuar o pagamento com o Mercado Pago.</p>
+<p>
+  Clique no botão abaixo para efetuar o pagamento com o Mercado Pago.
+</p>
 
+<p>
 <a href="<%= mercado_pago_payment_url_for(payment_method, @order) %>"
   name="MP-Checkout" class="lightblue-M-Ov-ArOn" mp-mode="modal"
   onreturn="paymentReturn">Pagar</a>
+</p>
+
+<p id="mercado_pago_banner" style="display: none;">
+<%= image_tag 'banner_mercado_pago_lateral.png' %>
+</p>
 
 <script>
   SpreeMercadoPago.paymentMethodID = "<%= payment_method.id %>"

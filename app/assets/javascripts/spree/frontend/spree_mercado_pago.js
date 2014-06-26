@@ -11,6 +11,14 @@ SpreeMercadoPago = {
     } else {
       $('.continue').show();
     }
+  },
+  showMercadoPagoBanner: function(paymentMethod) {
+    var banner = $('p#mercado_pago_banner').clone().show();
+    if (SpreeMercadoPago.paymentMethodID && paymentMethod.val() == SpreeMercadoPago.paymentMethodID) {
+      $('#checkout-summary').append(banner);
+    } else {
+      $('#checkout-summary #mercado_pago_banner').remove();
+    }
   }
 }
 
@@ -19,5 +27,6 @@ $(document).ready(function() {
   SpreeMercadoPago.hidePaymentSaveAndContinueButton(checkedPaymentMethod);
   paymentMethods = $('div[data-hook="checkout_payment_step"] input[type="radio"]').click(function (e) {
     SpreeMercadoPago.hidePaymentSaveAndContinueButton($(e.target));
+    SpreeMercadoPago.showMercadoPagoBanner($(e.target));
   });
 })
