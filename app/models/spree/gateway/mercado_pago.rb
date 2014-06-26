@@ -8,6 +8,10 @@ module Spree
     preference :client_id, :string
     preference :client_secret, :string
 
+    def logger
+      @mp_logger ||= Logger.new("#{Rails.root}/log/mercado_pago.log")
+    end
+
     def source_required?
       false
     end
@@ -41,15 +45,18 @@ module Spree
     end
 
     def notification(ref)
+      logger.info "Enviando notificação: #{ref.inspect}"
       notification = provider.notification(ref)
+      logger.info "Notificação retorno Mercado Pago: #{ref.inspect}"
 
       notification
     end
 
     def create_preference(order, back_urls, notification_uri)
-      payment_preference = payment_preference(order, back_urls, notification_uri)
-
-      preference = provider.create_preference(payment_preference)
+      pr = payment_preference(order, back_urls, notification_uri)
+      logger.info "Enviando preferência de pagamento: #{pr.inspect}"
+      preference = provider.create_preference(pr)
+      logger.info "Preferência retorno Mercado Pago: #{preference.inspect}"
 
       preference
     end
@@ -134,6 +141,5 @@ module Spree
 
       preference
     end
-
   end
 end
