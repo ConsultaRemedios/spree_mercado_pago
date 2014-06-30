@@ -43,7 +43,7 @@ module Spree
     def notification(ref)
       Rails.logger.info "Enviando notificação: #{ref.inspect}"
       notification = provider.notification(ref)
-      Rails.logger.info "Notificação retorno Mercado Pago: #{ref.inspect}"
+      Rails.logger.info "Notificação retorno Mercado Pago: #{notification.inspect}"
 
       notification
     end
