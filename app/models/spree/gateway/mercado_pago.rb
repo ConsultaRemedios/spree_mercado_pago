@@ -83,6 +83,9 @@ module Spree
       preference[:back_urls] = back_urls
       preference[:notification_uri] = notification_uri
 
+      # MercadoPago asked for it. Do'h!
+      preference[:notification_url] = notification_uri
+
       # User Information
       preference[:payer] = {
         phone: {
