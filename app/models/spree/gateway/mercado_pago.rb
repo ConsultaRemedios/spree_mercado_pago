@@ -7,6 +7,7 @@ module Spree
 
     preference :client_id, :string
     preference :client_secret, :string
+    preference :installments, :integer, default: 12
 
     def source_required?
       false
@@ -136,6 +137,11 @@ module Spree
           zip_code: order.ship_address.zipcode,
           street_name: order.ship_address.address1,
         }
+      }
+
+      # Payment Configuration
+      preference[:payment_methods] = {
+        installments: preferred_installments
       }
 
       preference
