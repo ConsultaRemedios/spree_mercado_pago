@@ -8,7 +8,7 @@ module Spree
 
       order_no = external_reference.split('@').first
       order_status = notification["collection"]["status"]
-      order = Spree::Order.find_by(number: order_no)
+      order = Spree::Order.find_by(number: /(\AR[0-9]+)/.match(order_no,0).to_s)
 
       update_payment_status(order, order_status)
 
