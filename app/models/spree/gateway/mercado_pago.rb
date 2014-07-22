@@ -7,6 +7,7 @@ module Spree
 
     preference :client_id, :string
     preference :client_secret, :string
+    preference :installments, :integer, default: 12
 
     def source_required?
       false
@@ -43,7 +44,7 @@ module Spree
     def notification(ref)
       Rails.logger.info "Enviando notificação: #{ref.inspect}"
       notification = provider.notification(ref)
-      Rails.logger.info "Notificação retorno Mercado Pago: #{ref.inspect}"
+      Rails.logger.info "Notificação retorno Mercado Pago: #{notification.inspect}"
 
       notification
     end
@@ -82,6 +83,9 @@ module Spree
       preference[:external_reference] = external_reference
       preference[:back_urls] = back_urls
       preference[:notification_uri] = notification_uri
+
+      # MercadoPago asked for it. Do'h!
+      preference[:notification_url] = notification_uri
 
       # User Information
       preference[:payer] = {
@@ -133,6 +137,11 @@ module Spree
           zip_code: order.ship_address.zipcode,
           street_name: order.ship_address.address1,
         }
+      }
+
+      # Payment Configuration
+      preference[:payment_methods] = {
+        installments: preferred_installments
       }
 
       preference

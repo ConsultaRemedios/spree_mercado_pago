@@ -66,14 +66,17 @@ module Spree
       end
 
       def proccess_order
-        order = current_order || raise(ActiveRecord::RecordNotFound)
+        order = Spree::Order.by_number(params["order"]).first
+        raise(ActiveRecord::RecordNotFound) if order.nil?
 
-        order.payments.create!({
-          amount: order.total,
-          payment_method: payment_method
-        })
+        unless order.payments.any?
+            order.payments.create!({
+            amount: order.total,
+            payment_method: payment_method
+          })
+          order.next
+        end
 
-        order.next
         if order.complete?
           flash[:success] = Spree.t(:order_mp_processed_successfully)
           redirect_to order_path(order, token: order.token)

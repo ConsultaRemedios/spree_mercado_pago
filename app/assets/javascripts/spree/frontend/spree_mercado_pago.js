@@ -15,6 +15,7 @@ SpreeMercadoPago = {
   showMercadoPagoBanner: function(paymentMethod) {
     var banner = $('p#mercado_pago_banner').clone().show();
     if (SpreeMercadoPago.paymentMethodID && paymentMethod.val() == SpreeMercadoPago.paymentMethodID) {
+      $('#checkout-summary #mercado_pago_banner').remove();
       $('#checkout-summary').append(banner);
     } else {
       $('#checkout-summary #mercado_pago_banner').remove();

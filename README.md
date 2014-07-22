@@ -20,9 +20,8 @@ Add spree_mercado_pago to your javascript file:
 
 Add to ENV:
 ```ruby
-MERCADO_PAGO_APP_ID=7684257272592699
-MERCADO_PAGO_SECRET_TOKEN=oRCVmZmItuJU5oPu4aWeOok9Xs1DMU0a
-MERCADO_PAGO_FEE_PERCENT=2
+MERCADO_PAGO_APP_ID=99999999999999
+MERCADO_PAGO_SECRET_TOKEN=SECRET-TOKEN
 ```
 
 Bundle your dependencies and run the installation generator:
