@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_mercado_pago'
-  s.version     = '2.1.1'
+  s.version     = '2.1.3'
   s.summary     = 'Mercado Pago Payment for Spree'
   s.description = 'Let Spree proccess your payment with Mercado Pago'
   s.required_ruby_version = '>= 1.9.3'
