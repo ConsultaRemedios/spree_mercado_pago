@@ -62,6 +62,7 @@ module Spree
 
       if order.payment?
         order.state = 'complete'
+        order.completed_at = Time.now
         order.save
       end
 
