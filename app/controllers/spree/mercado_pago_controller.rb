@@ -33,9 +33,8 @@ module Spree
     def update_payment_status(order, order_status)
       order = create_payment_for(order)
 
-      unless order.complete?
-        order.state = 'complete'
-        order.save
+      if order.payment?
+        order.next
       end
 
       payment = order.payments.last
@@ -61,9 +60,7 @@ module Spree
       order = create_payment_for(order)
 
       if order.payment?
-        order.state = 'complete'
-        order.completed_at = Time.now
-        order.save
+        order.next
       end
 
       if order.complete?
