@@ -9,6 +9,7 @@ module Spree
         order_no = external_reference.split('@').first
         order_status = notification["collection"]["status"]
         order = Spree::Order.find_by(number: order_no)
+        order = go_to_next_step(order)
 
         update_payment_status(order, order_status)
       end
@@ -30,14 +31,21 @@ module Spree
     end
 
     private
-    def update_payment_status(order, order_status)
-      order = create_payment_for(order)
 
+    def go_to_next_step(order)
       if order.payment?
+        order.payments.create!({
+          :amount => order.total,
+          :payment_method => gateway
+        })
         order.next
       end
+      order
+    end
 
+    def update_payment_status(order, order_status)
       payment = order.payments.last
+      payment.order = order #payment has old reference from order :/
 
       case order_status
       when 'approved'
@@ -57,11 +65,8 @@ module Spree
       order = Spree::Order.by_number(params["order"]).first
       raise(ActiveRecord::RecordNotFound) if order.nil?
 
-      order = create_payment_for(order)
-
-      if order.payment?
-        order.next
-      end
+      order = go_to_next_step(order)
+      order.next
 
       if order.complete?
         flash[:success] = Spree.t(:order_mp_processed_successfully)
@@ -69,16 +74,6 @@ module Spree
       else
         redirect_to checkout_state_path(order.state)
       end
-    end
-
-    def create_payment_for(order)
-      unless order.payments.any?
-        order.payments.create!({
-          amount: order.total,
-          payment_method: gateway
-        })
-      end
-      order
     end
   end
 end
