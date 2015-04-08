@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'spree_core', '~> 2.1.0'
-  s.add_dependency 'mercadopago', '~> 2.0.2'
+  s.add_dependency 'mercadopago', '~> 2.2.1'
   s.add_dependency 'json', '>= 1.4.6'
   s.add_dependency 'faraday', '0.9.0'
 
